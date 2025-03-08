@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>シフト募集数</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/styles.css') }}"
+    />
+  </head>
+  <body>
+    <!-- navigation bar -->
+    <div class="navbar">
+      <div class="add-shift">
+        <a
+          href="javascript:void(0)"
+          style="color: #00c1ff; text-decoration: none"
+          onclick="showPopup()"
+          >Add Shift</a
+        >
+      </div>
+
+      <div class="nav-buttons">
+        <!-- Navigation buttons removed for simplicity -->
+      </div>
+    </div>
+
+    <!-- 大枠 -->
+    <div class="container">
+      <!-- シフト募集数の合計時間を h1 タグで表示 -->
+      <h1>シフト募集数の合計時間: {{ total_time }}</h1>
+
+      {% if start_date and end_date %}
+      <!-- 表示範囲 -->
+      <div class="date-range-display">
+        <h3>現在の表示範囲: {{ start_date }} から {{ end_date }} まで</h3>
+      </div>
+      {% elif not start_date and not end_date %}
+      <!-- 範囲指定なし -->
+      <div class="date-range-display">
+        <h3>現在の表示範囲: 指定なし（すべてのデータ）</h3>
+      </div>
+      {% endif %}
+
+      <!-- ここに表示範囲指定フォームを追加 -->
+      <div class="date-range-form">
+        <h3>表示範囲を指定</h3>
+        <form action="/" method="POST">
+          <label for="start_date">開始日時 (年/月): </label>
+          <input type="month" id="start_date" name="start_date" required />
+
+          <label for="end_date">終了日時 (年/月): </label>
+          <input type="month" id="end_date" name="end_date" required />
+
+          <input type="submit" value="Apply" />
+        </form>
+      </div>
+
+      {% if message %}
+      <h3>{{ message }}</h3>
+      {% else %}
+      <!-- Display content can be added here in the future -->
+      {% endif %}
+    </div>
+
+    <script>
+      function showPopup() {
+        document.getElementById("popupOverlay").style.display = "flex";
+        document.getElementById("shiftPopup").style.display = "block";
+      }
+
+      function closePopup() {
+        document.getElementById("popupOverlay").style.display = "none";
+        document.getElementById("shiftPopup").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
