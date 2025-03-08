@@ -6,3 +6,6 @@ Data/
 
 # image
 static/plots/
+
+# cache
+__pycache__/
