@@ -20,7 +20,6 @@
           >Add Shift</a
         >
       </div>
-
       <div class="nav-buttons">
         <!-- Navigation buttons removed for simplicity -->
       </div>
@@ -32,12 +31,10 @@
       <h1>シフト募集数の合計時間: {{ total_time }}</h1>
 
       {% if start_date and end_date %}
-      <!-- 表示範囲 -->
       <div class="date-range-display">
         <h3>現在の表示範囲: {{ start_date }} から {{ end_date }} まで</h3>
       </div>
       {% elif not start_date and not end_date %}
-      <!-- 範囲指定なし -->
       <div class="date-range-display">
         <h3>現在の表示範囲: 指定なし（すべてのデータ）</h3>
       </div>
@@ -49,22 +46,105 @@
         <form action="/" method="POST">
           <label for="start_date">開始日時 (年/月): </label>
           <input type="month" id="start_date" name="start_date" required />
-
           <label for="end_date">終了日時 (年/月): </label>
           <input type="month" id="end_date" name="end_date" required />
-
           <input type="submit" value="Apply" />
         </form>
       </div>
 
-      {% if message %}
-      <h3>{{ message }}</h3>
-      {% else %}
-      <!-- Display content can be added here in the future -->
-      {% endif %}
+      <!-- 表示するグラフ -->
+      <div class="chart-container">
+        <!-- Shift Requests by Time Slot -->
+        <div>
+          <h3>
+            時間帯ごとのシフト募集数
+            <a
+              href="{{ url_for('download_plot', plot_type='shift_requests_time_based') }}"
+              style="font-size: 14px; color: #00c1ff; text-decoration: none"
+              >[Download]</a
+            >
+          </h3>
+          <img
+            src="{{ url_for('static', filename='plots/shift_requests_time_based.png') }}"
+            alt="Shift Requests by Time Slot"
+          />
+        </div>
+
+        <!-- Shift Requests by Weekday -->
+        <div>
+          <h3>
+            曜日ごとのシフト募集数
+            <a
+              href="{{ url_for('download_plot', plot_type='shift_requests_weekday') }}"
+              style="font-size: 14px; color: #00c1ff; text-decoration: none"
+              >[Download]</a
+            >
+          </h3>
+          <img
+            src="{{ url_for('static', filename='plots/shift_requests_weekday.png') }}"
+            alt="Shift Requests by Weekday"
+          />
+        </div>
+
+        <!-- Shift Requests by Month -->
+        <div>
+          <h3>
+            月ごとのシフト募集数の推移
+            <a
+              href="{{ url_for('download_plot', plot_type='shift_requests_monthly') }}"
+              style="font-size: 14px; color: #00c1ff; text-decoration: none"
+              >[Download]</a
+            >
+          </h3>
+          <img
+            src="{{ url_for('static', filename='plots/shift_requests_monthly.png') }}"
+            alt="Shift Requests by Month"
+          />
+        </div>
+      </div>
     </div>
 
     <script>
+      window.onload = function () {
+        const images = document.querySelectorAll(".chart-container img");
+
+        images.forEach((image) => {
+          // 画像がすでに読み込まれている場合は、直ちに縦横比を計算
+          if (image.complete) {
+            const ratio = image.width / image.height;
+            if (ratio > 2) {
+              // image.style.gridColumn = 'span 2';
+              image.style.setProperty("grid-column", "span 2", "important");
+              // 親の div 要素にも grid-column を設定
+              const parentDiv = image.closest("div");
+              if (parentDiv) {
+                parentDiv.style.setProperty(
+                  "grid-column",
+                  "span 2",
+                  "important"
+                );
+              }
+            }
+          } else {
+            // 画像がまだ読み込まれていない場合は、onloadイベントで縦横比を計算
+            image.onload = function () {
+              const ratio = image.width / image.height;
+              if (ratio > 3) {
+                image.style.setProperty("grid-column", "span 2", "important");
+                // 親の div 要素にも grid-column を設定
+                const parentDiv = image.closest("div");
+                if (parentDiv) {
+                  parentDiv.style.setProperty(
+                    "grid-column",
+                    "span 2",
+                    "important"
+                  );
+                }
+              }
+            };
+          }
+        });
+      };
       function showPopup() {
         document.getElementById("popupOverlay").style.display = "flex";
         document.getElementById("shiftPopup").style.display = "block";

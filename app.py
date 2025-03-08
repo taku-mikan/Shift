@@ -1,19 +1,29 @@
 import os
-
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
+from PIL import Image
 import pandas as pd
-
+from static.utils.plots import generate_time_based_plots, generate_weekday_plots, generate_monthly_plots
 
 app = Flask(__name__)
 
-
 Path_Data = "./Data/shift_data.csv"
+PLOT_FOLDER = "static/plots/"
 
 # ファイルを作成する関数
 def make_file(path):
     df = pd.DataFrame(columns=['Year', 'Month', 'Day', 'Start Time', 'End Time'])
     df.to_csv(path, index=False)
 
+# プロットフォルダを作成する関数
+def make_plot_folder(path):
+    os.makedirs(path, exist_ok=True)
+
+# 画像のサイズを取得する関数
+def get_image_size(image_path):
+    if not os.path.exists(image_path):
+        return None  # 画像が存在しない場合はNoneを返す
+    with Image.open(image_path) as img:
+        return img.size  # (width, height)
 
 # 総募集時間を計算する関数
 def generate_total_time(df):
@@ -37,40 +47,80 @@ def generate_total_time(df):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    # データを読み込む
     df = pd.read_csv(Path_Data)
 
-    # デフォルトの開始日と終了日を設定
-    start_date = end_date = None
+    # プロットフォルダを作成（存在しない場合）
+    make_plot_folder(PLOT_FOLDER)
 
-    # 初回アクセス時に最も古い日付と最新の日付を取得
-    if request.method == "GET":
-        # 'Year'と'Month'列を使って年月を作成
-        df['Year-Month'] = df['Year'].astype(str) + '-' + df['Month'].astype(str).str.zfill(2)
-        # 最も古い日付と最新の日付を取得
-        start_date = df['Year-Month'].min()  # 最も古い年月
-        end_date = df['Year-Month'].max()    # 最も新しい年月
+    # 画像のパス
+    time_based_image_path = os.path.join(PLOT_FOLDER, "shift_requests_time_based.png")
+    weekday_image_path = os.path.join(PLOT_FOLDER, "shift_requests_weekday.png")
+    monthly_image_path = os.path.join(PLOT_FOLDER, "shift_requests_monthly.png")
 
-    # フォームから開始日および終了日を取得（POST時）
-    if request.method == "POST":
+    # グラフ画像を毎回生成して保存
+    time_based_plot_path = generate_time_based_plots(df)
+    weekday_plot_path = generate_weekday_plots(df)
+    monthly_plot_path = generate_monthly_plots(df)
+
+    # 画像の横幅と縦幅を取得
+    time_based_size = get_image_size(time_based_image_path)
+    weekday_size = get_image_size(weekday_image_path)
+    monthly_size = get_image_size(monthly_image_path)
+
+    # 画像が存在しない場合はデフォルトの比率を設定
+    time_based_ratio = (time_based_size[0] / time_based_size[1]) if time_based_size else 1
+    weekday_ratio = (weekday_size[0] / weekday_size[1]) if weekday_size else 1
+    monthly_ratio = (monthly_size[0] / monthly_size[1]) if monthly_size else 1
+
+    # フォームから開始日と終了日を取得
+    if request.method == 'POST':
         start_date = request.form['start_date']
         end_date = request.form['end_date']
-
+        
         # 範囲をフィルタリング
         df['Year-Month'] = df['Year'].astype(str) + '-' + df['Month'].astype(str).str.zfill(2)
-        filterd_df = df[(df["Year-Month"] >= start_date) & (df['Year-Month'] <= end_date)]
+        filtered_df = df[(df['Year-Month'] >= start_date) & (df['Year-Month'] <= end_date)]
     else:
-        # 初回アクセス時にデフォルトの範囲でフィルタリング（最も古いと新しいデータを使用）
-        filterd_df = df[(df["Year-Month"] >= start_date) & (df['Year-Month'] <= end_date)]
+        filtered_df = df
 
-    # 総募集時間を計算
-    total_time = generate_total_time(filterd_df)
+    # 総募集時間の計算
+    total_time = generate_total_time(filtered_df)
 
-    return render_template('index.html', total_time=total_time, start_date=start_date, end_date=end_date)
+    print("*" * 100)
+    print(time_based_ratio)
+    print(weekday_ratio)
+    print(monthly_ratio)
+
+    return render_template(
+        'index.html',
+        time_based_plot_url=time_based_plot_path,
+        weekday_plot_url=weekday_plot_path,
+        monthly_plot_url=monthly_plot_path,
+        total_time=total_time,
+        time_based_ratio=time_based_ratio,
+        weekday_ratio=weekday_ratio,
+        monthly_ratio=monthly_ratio
+    )
+
+@app.route('/download_plot/<plot_type>')
+def download_plot(plot_type):
+    plot_path_map = {
+        'shift_requests_time_based': os.path.join(PLOT_FOLDER, "shift_requests_time_based.png"),
+        'shift_requests_weekday': os.path.join(PLOT_FOLDER, "shift_requests_weekday.png"),
+        'shift_requests_monthly': os.path.join(PLOT_FOLDER, "shift_requests_monthly.png"),
+    }
+    
+    plot_path = plot_path_map.get(plot_type)
+    if plot_path and os.path.exists(plot_path):
+        return send_file(plot_path, as_attachment=True)
+    return "Plot not found", 404
 
 if __name__ == "__main__":
-    # 初回実行時、ファイルを作成
+    # 初回実行時のセットアップ
     if not os.path.exists(Path_Data):
         make_file(Path_Data)
+    make_plot_folder(PLOT_FOLDER)  # プロットフォルダを必ず作成
+
     # 起動
     app.run(debug=True)
-

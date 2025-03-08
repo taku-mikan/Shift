@@ -1,172 +1,173 @@
 /* 背景色と文字色を白と青に変更 */
 body {
-    background-color: #ffffff; /* 背景色を白に */
-    color: #1e3d58; /* 文字色を青に */
-    font-family: "Arial", sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  
-  h1,
-  h3 {
-    color: #1e3d58; /* 見出しの色を青に */
-  }
-  
-  h1 {
-    text-align: center;
-    font-size: 36px;
-    margin-top: 20px;
-  }
-  
-  h3 {
-    font-size: 24px;
-    margin-top: 20px;
-  }
-  
-  .navbar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #ffffff;
-    height: 60px;
-    padding: 10px;
-    position: relative;
-  }
-  
-  /* Add Shiftボタンのデザインを修正 */
-  .navbar .add-shift a {
-    font-size: 24px;
-    font-weight: bold;
-    padding: 12px 25px;
-    text-transform: uppercase;
-    border-radius: 8px;
-    background-color: #ffffff;  /* 背景に合わせて白色 */
-    color: #1e3d58;  /* 青色の文字 */
-    text-decoration: none;
-    border: 2px solid #00c1ff;  /* 青色のボーダーを追加 */
-    transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: #ffffff;
+  color: #1e3d58;
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+h1,
+h3 {
+  color: #1e3d58;
+}
+
+h1 {
+  font-size: 36px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+h3 {
+  font-size: 24px;
+  margin-top: 20px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  height: 60px;
+  padding: 10px;
+  position: relative;
+}
+
+.navbar .add-shift a {
+  font-size: 24px;
+  font-weight: bold;
+  padding: 12px 25px;
+  text-transform: uppercase;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #1e3d58;
+  text-decoration: none;
+  border: 2px solid #00c1ff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar .add-shift a:hover {
+  background-color: #00c1ff;
+  color: white;
+}
+
+.date-range-form {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 0 20px rgba(0, 194, 255, 0.5);
+}
+
+.date-range-form h3 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #1e3d58;
+  text-align: center;
+}
+
+.date-range-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: #1e3d58;
+}
+
+.date-range-form input[type="month"],
+.date-range-form input[type="submit"] {
+  background-color: #f5f5f5;
+  color: #1e3d58;
+  border: 2px solid #00c1ff;
+  padding: 12px;
+  border-radius: 8px;
+  width: 70%;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.date-range-form input[type="submit"] {
+  width: 30%;
+}
+
+.date-range-form input[type="submit"]:hover {
+  background-color: #ff6ec7;
+}
+
+.container {
+  width: 99%;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+#shiftPopup {
+  background-color: #ffffff;
+  border: 2px solid #00c1ff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 194, 255, 0.5);
+  display: none;
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  max-height: 80%;
+  overflow-y: auto;
+}
+
+button {
+  background-color: #00c1ff;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+button:hover {
+  background-color: #ff6ec7;
+}
+
+/* デフォルトで画像は2列レイアウト */
+.chart-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);  /* 2列表示 */
+  gap: 10px;
+  margin-top: 20px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* 横長の画像を判定するCSS。 JavaScriptで判定して動的にスタイルが適用される */
+.chart-container img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 194, 255, 0.5);
+  background-color: transparent;
+  display: block;
+  margin: 0 auto;
+  /* 画像の縦横比が大きくても、目盛りが表示されるように調整 */
+  max-width: 100%;
+}
+
+/* 画面幅が800px以下の場合は1列に変更 */
+@media (max-width: 800px) {
+  .chart-container {
+      grid-template-columns: 1fr;  /* 1列表示 */
   }
 
-  .navbar .add-shift a:hover {
-    background-color: #00c1ff;  /* ホバー時に青色に変化 */
-    color: white;  /* ホバー時に文字色を白に */
+  /* 1枚目の画像が小さくても1列に表示 */
+  .chart-container img {
+      grid-column: span 1; /* 1列表示 */
   }
-
-  
-  .nav-buttons {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .nav-buttons a {
-    margin-left: 10px;
-    font-size: 18px;
-    color: #00c1ff;
-    text-decoration: none;
-  }
-  
-  .nav-buttons a:hover {
-    color: #ff6ec7;
-    text-decoration: underline;
-  }
-  
-  /* シフトデータ範囲指定フォームのスタイル */
-  .date-range-form {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px auto;
-    width: 90%;
-    max-width: 600px;
-    box-shadow: 0 0 20px rgba(0, 194, 255, 0.5);
-  }
-  
-  .date-range-form h3 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #1e3d58; /* 青色の見出し */
-    text-align: center;
-  }
-  
-  .date-range-form label {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 18px;
-    color: #1e3d58; /* ラベルを青色に */
-  }
-  
-  .date-range-form input[type="month"],
-  .date-range-form input[type="submit"] {
-    background-color: #f5f5f5;
-    color: #1e3d58;
-    border: 2px solid #00c1ff;
-    padding: 12px;
-    border-radius: 8px;
-    width: 70%;
-    font-size: 18px;
-    margin-bottom: 20px;
-  }
-
-  .date-range-form input[type="submit"] {
-    width: 30%;
-  }
-  
-  .date-range-form input[type="submit"] {
-    cursor: pointer;
-  }
-  
-  .date-range-form input[type="submit"]:hover {
-    background-color: #ff6ec7;
-  }
-  
-  /* コンテナ */
-  .container {
-    width: 99%;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-  }
-  
-  /* シフト募集数の合計時間 */
-  h1 {
-    margin-top: 20px;
-    font-size: 36px;
-  }
-  
-  /* オーバーレイとポップアップのスタイル */
-  #shiftPopup {
-    background-color: #ffffff;
-    border: 2px solid #00c1ff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 194, 255, 0.5);
-    display: none;
-    position: absolute;
-    top: 10%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 400px;
-    max-height: 80%;
-    overflow-y: auto;
-  }
-  
-  #shiftPopup h3 {
-    text-align: center;
-    color: #1e3d58;
-  }
-  
-  button {
-    background-color: #00c1ff;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 20px;
-  }
-  
-  button:hover {
-    background-color: #ff6ec7;
-  }
-  
+}
