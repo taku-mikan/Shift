@@ -3,3 +3,6 @@ Data/
 
 # pyenv
 .python-version
+
+# image
+static/plots/
