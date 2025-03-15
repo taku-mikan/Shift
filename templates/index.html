@@ -94,62 +94,43 @@
         <h3>表示範囲を指定</h3>
         <form action="/" method="POST">
           <label for="start_date">開始日時 (年/月): </label>
-          <input type="month" id="start_date" name="start_date" required />
+          <input
+            type="month"
+            id="start_date"
+            name="start_date"
+            value="{{ start_date }}"
+            required
+          />
           <label for="end_date">終了日時 (年/月): </label>
-          <input type="month" id="end_date" name="end_date" required />
+          <input
+            type="month"
+            id="end_date"
+            name="end_date"
+            value="{{ end_date }}"
+            required
+          />
           <input type="submit" value="Apply" />
         </form>
       </div>
 
       <!-- 表示するグラフ -->
       <div class="chart-container">
-        <!-- Shift Requests by Time Slot -->
         <div>
-          <h3>
-            時間帯ごとのシフト募集数
-            <a
-              href="{{ url_for('download_plot', plot_type='shift_requests_time_based') }}"
-              style="font-size: 14px; color: #00c1ff; text-decoration: none"
-              >[Download]</a
-            >
-          </h3>
-          <img
-            src="{{ url_for('static', filename='plots/shift_requests_time_based.png') }}"
-            alt="Shift Requests by Time Slot"
-          />
+            <h3>時間帯ごとのシフト募集数</h3>
+            <img src="{{ time_based_plot_url }}" alt="Shift Requests by Time Slot" />
         </div>
 
-        <!-- Shift Requests by Weekday -->
         <div>
-          <h3>
-            曜日ごとのシフト募集数
-            <a
-              href="{{ url_for('download_plot', plot_type='shift_requests_weekday') }}"
-              style="font-size: 14px; color: #00c1ff; text-decoration: none"
-              >[Download]</a
-            >
-          </h3>
-          <img
-            src="{{ url_for('static', filename='plots/shift_requests_weekday.png') }}"
-            alt="Shift Requests by Weekday"
-          />
+            <h3>曜日ごとのシフト募集数</h3>
+            <img src="{{ weekday_plot_url }}" alt="Shift Requests by Weekday" />
         </div>
 
-        <!-- Shift Requests by Month -->
         <div>
-          <h3>
-            月ごとのシフト募集数の推移
-            <a
-              href="{{ url_for('download_plot', plot_type='shift_requests_monthly') }}"
-              style="font-size: 14px; color: #00c1ff; text-decoration: none"
-              >[Download]</a
-            >
-          </h3>
-          <img
-            src="{{ url_for('static', filename='plots/shift_requests_monthly.png') }}"
-            alt="Shift Requests by Month"
-          />
+            <h3>月ごとのシフト募集数の推移</h3>
+            <img src="{{ monthly_plot_url }}" alt="Shift Requests by Month" />
         </div>
+      </div>
+      
       </div>
     </div>
 

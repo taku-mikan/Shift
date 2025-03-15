@@ -11,7 +11,7 @@ PLOT_FOLDER = "static/plots/"
 
 # ファイルを作成する関数
 def make_file(path):
-    df = pd.DataFrame(columns=['Year', 'Month', 'Day', 'Start Time', 'End Time'])
+    df = pd.DataFrame(columns=['Year', 'Month', 'Date', 'Start Time', 'End Time'])
     df.to_csv(path, index=False)
 
 # プロットフォルダを作成する関数
@@ -53,36 +53,21 @@ def index():
     # プロットフォルダを作成（存在しない場合）
     make_plot_folder(PLOT_FOLDER)
 
-    # 画像のパス
-    time_based_image_path = os.path.join(PLOT_FOLDER, "shift_requests_time_based.png")
-    weekday_image_path = os.path.join(PLOT_FOLDER, "shift_requests_weekday.png")
-    monthly_image_path = os.path.join(PLOT_FOLDER, "shift_requests_monthly.png")
-
-    # グラフ画像を毎回生成して保存
-    time_based_plot_path = generate_time_based_plots(df)
-    weekday_plot_path = generate_weekday_plots(df)
-    monthly_plot_path = generate_monthly_plots(df)
-
-    # 画像の横幅と縦幅を取得
-    time_based_size = get_image_size(time_based_image_path)
-    weekday_size = get_image_size(weekday_image_path)
-    monthly_size = get_image_size(monthly_image_path)
-
-    # 画像が存在しない場合はデフォルトの比率を設定
-    time_based_ratio = (time_based_size[0] / time_based_size[1]) if time_based_size else 1
-    weekday_ratio = (weekday_size[0] / weekday_size[1]) if weekday_size else 1
-    monthly_ratio = (monthly_size[0] / monthly_size[1]) if monthly_size else 1
-
     # フォームから開始日と終了日を取得
     if request.method == 'POST':
         start_date = request.form['start_date']
         end_date = request.form['end_date']
-        
+
         # 範囲をフィルタリング
         df['Year-Month'] = df['Year'].astype(str) + '-' + df['Month'].astype(str).str.zfill(2)
         filtered_df = df[(df['Year-Month'] >= start_date) & (df['Year-Month'] <= end_date)]
     else:
-        filtered_df = df
+        filtered_df = df  # 初回起動時は全データを使用
+
+    # グラフ画像を生成
+    time_based_plot_path = generate_time_based_plots(filtered_df)
+    weekday_plot_path = generate_weekday_plots(filtered_df)
+    monthly_plot_path = generate_monthly_plots(filtered_df)
 
     # 総募集時間の計算
     total_time = generate_total_time(filtered_df)
@@ -93,9 +78,8 @@ def index():
         weekday_plot_url=weekday_plot_path,
         monthly_plot_url=monthly_plot_path,
         total_time=total_time,
-        time_based_ratio=time_based_ratio,
-        weekday_ratio=weekday_ratio,
-        monthly_ratio=monthly_ratio
+        start_date=request.form.get('start_date', ''),
+        end_date=request.form.get('end_date', '')
     )
 
 @app.route('/download_plot/<plot_type>')
@@ -111,45 +95,17 @@ def download_plot(plot_type):
         return send_file(plot_path, as_attachment=True)
     return "Plot not found", 404
 
-
-@app.route('/add_shift', methods=['POST'])
-def add_shift():
-    # make empty DataFrame if not exist csv file.
-    if not os.path.exists(Path_Data):
-        df = pd.DataFrame(columns=['Year', 'Month', 'Date', 'Start Time', 'End Time'])
-    else:
-        df = pd.read_csv(Path_Data)
-
-    # featch data from inputted form
-    year = request.form['year']
-    month = request.form['month']
-    dates = request.form.getlist('date[]')
-    start_times = request.form.getlist('start_time[]')
-    end_times = request.form.getlist('end_time[]')
-
-    # data to list
-    new_data = []
-    for i in range(len(dates)):
-        new_data.append([int(year), int(month), int(dates[i]), start_times[i], end_times[i]])
-
-    # Add new data
-    new_df = pd.DataFrame(new_data, columns=['Year', 'Month', 'Date', 'Start Time', 'End Time'])
-    df = pd.concat([df, new_df], ignore_index=True)
-
-    # sort (Year → Month → Date → Start Time)
-    df.sort_values(by=['Year', 'Month', 'Date', 'Start Time'], ascending=[True, True, True, True], inplace=True)
-
-    # save csv
-    df.to_csv(Path_Data, index=False)
-
-    return redirect(url_for('index'))
-
-
 if __name__ == "__main__":
     # 初回実行時のセットアップ
     if not os.path.exists(Path_Data):
         make_file(Path_Data)
     make_plot_folder(PLOT_FOLDER)  # プロットフォルダを必ず作成
+
+    # アプリ起動時に全データのグラフを作成
+    df = pd.read_csv(Path_Data)
+    generate_time_based_plots(df)
+    generate_weekday_plots(df)
+    generate_monthly_plots(df)
 
     # 起動
     app.run(debug=True)
