@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, redirect, url_for
 from PIL import Image
 import pandas as pd
 from static.utils.plots import generate_time_based_plots, generate_weekday_plots, generate_monthly_plots
@@ -87,11 +87,6 @@ def index():
     # 総募集時間の計算
     total_time = generate_total_time(filtered_df)
 
-    print("*" * 100)
-    print(time_based_ratio)
-    print(weekday_ratio)
-    print(monthly_ratio)
-
     return render_template(
         'index.html',
         time_based_plot_url=time_based_plot_path,
@@ -115,6 +110,40 @@ def download_plot(plot_type):
     if plot_path and os.path.exists(plot_path):
         return send_file(plot_path, as_attachment=True)
     return "Plot not found", 404
+
+
+@app.route('/add_shift', methods=['POST'])
+def add_shift():
+    # make empty DataFrame if not exist csv file.
+    if not os.path.exists(Path_Data):
+        df = pd.DataFrame(columns=['Year', 'Month', 'Date', 'Start Time', 'End Time'])
+    else:
+        df = pd.read_csv(Path_Data)
+
+    # featch data from inputted form
+    year = request.form['year']
+    month = request.form['month']
+    dates = request.form.getlist('date[]')
+    start_times = request.form.getlist('start_time[]')
+    end_times = request.form.getlist('end_time[]')
+
+    # data to list
+    new_data = []
+    for i in range(len(dates)):
+        new_data.append([int(year), int(month), int(dates[i]), start_times[i], end_times[i]])
+
+    # Add new data
+    new_df = pd.DataFrame(new_data, columns=['Year', 'Month', 'Date', 'Start Time', 'End Time'])
+    df = pd.concat([df, new_df], ignore_index=True)
+
+    # sort (Year → Month → Date → Start Time)
+    df.sort_values(by=['Year', 'Month', 'Date', 'Start Time'], ascending=[True, True, True, True], inplace=True)
+
+    # save csv
+    df.to_csv(Path_Data, index=False)
+
+    return redirect(url_for('index'))
+
 
 if __name__ == "__main__":
     # 初回実行時のセットアップ

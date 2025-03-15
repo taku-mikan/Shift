@@ -102,35 +102,71 @@ h3 {
   text-align: center;
 }
 
+/* モーダル背景 */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+}
+
+/* モーダルコンテンツ */
 #shiftPopup {
   background-color: #ffffff;
   border: 2px solid #00c1ff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 194, 255, 0.5);
-  display: none;
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  transform: translateX(-50%);
   width: 400px;
-  max-height: 80%;
-  overflow-y: auto;
+  text-align: center;
 }
 
-button {
-  background-color: #00c1ff;
-  border: none;
+/* シフト入力欄 */
+.shift-form-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.shift-form-row input {
+  width: 30%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* 削除ボタン */
+.shift-form-row button {
+  background-color: red;
   color: white;
-  padding: 10px 20px;
-  font-size: 18px;
+  border: none;
+  padding: 5px;
   cursor: pointer;
   border-radius: 5px;
-  margin-top: 20px;
+}
+
+.shift-form-row button:hover {
+  background-color: darkred;
+}
+
+/* Add Another Shift ボタン */
+button {
+  background-color: #00c1ff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
 button:hover {
-  background-color: #ff6ec7;
+  background-color: #008bbf;
 }
 
 /* デフォルトで画像は2列レイアウト */
