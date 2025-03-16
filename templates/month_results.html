@@ -37,19 +37,31 @@
 
     <div class="chart-container">
         <div>
-            <h3>時間帯ごとの募集シフト募集時間</h3>
+            <h3>
+                時間帯ごとの募集シフト募集時間
+                <a href="{{ url_for('download_plot', plot_type='shift_requests_time_based') }}" style="font-size: 14px; color: blue; text-decoration: none;">(ダウンロード)</a>
+            </h3>
             <img src="{{ time_based_plot_url }}" alt="Shift Requests by Time Slot">
         </div>
         <div>
-            <h3>曜日ごとの募集シフト数</h3>
+            <h3>
+                曜日ごとの募集シフト数
+                <a href="{{ url_for('download_plot', plot_type='shift_requests_weekday') }}" style="font-size: 14px; color: blue; text-decoration: none;">(ダウンロード)</a>
+            </h3>
             <img src="{{ weekday_plot_url }}" alt="Shift Requests by Weekday">
         </div>
         <div>
-            <h3>曜日ごとの募集シフトの総時間数</h3>
+            <h3>
+                曜日ごとの募集シフトの総時間数
+                <a href="{{ url_for('download_plot', plot_type='shift_requests_weekday_total_time') }}" style="font-size: 14px; color: blue; text-decoration: none;">(ダウンロード)</a>
+            </h3>
             <img src="{{weekday_total_time_plot_url}}" alt="Shift Requests by Weekday Total Time">
         </div>
         <div>
-            <h3>日にちごとのシフト募集数</h3>
+            <h3>
+                日にちごとのシフト募集数
+                <a href="{{ url_for('download_plot', plot_type='shift_requests_by_day') }}" style="font-size: 14px; color: blue; text-decoration: none;">(ダウンロード)</a>
+            </h3>
             <img src="{{ daily_plot_url }}" alt="Shift Requests by Day">
         </div>
     </div>

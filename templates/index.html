@@ -116,17 +116,26 @@
       <!-- 表示するグラフ -->
       <div class="chart-container">
         <div>
-            <h3>時間帯ごとのシフト募集数</h3>
+            <h3>
+              時間帯ごとのシフト募集数
+              <a href="{{ url_for('download_plot', plot_type='shift_requests_time_based') }}" style="font-size: 14px; color: blue; text-decoration: none;">(ダウンロード)</a>
+            </h3>
             <img src="{{ time_based_plot_url }}" alt="Shift Requests by Time Slot" />
         </div>
 
         <div>
-            <h3>曜日ごとのシフト募集数</h3>
+            <h3>
+              曜日ごとのシフト募集数
+              <a href="{{ url_for('download_plot', plot_type='shift_requests_weekday') }}" style="font-size: 14px; color: blue; text-decoration: none;">(ダウンロード)</a>
+            </h3>
             <img src="{{ weekday_plot_url }}" alt="Shift Requests by Weekday" />
         </div>
 
         <div>
-            <h3>月ごとのシフト募集数の推移</h3>
+            <h3>
+              月ごとのシフト募集数の推移
+              <a href="{{ url_for('download_plot', plot_type='shift_requests_monthly') }}" style="font-size: 14px; color: blue; text-decoration: none;">(ダウンロード)</a>
+            </h3>
             <img src="{{ monthly_plot_url }}" alt="Shift Requests by Month" />
         </div>
       </div>

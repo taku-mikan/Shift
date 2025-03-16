@@ -129,12 +129,15 @@ def download_plot(plot_type):
         'shift_requests_time_based': os.path.join(PLOT_FOLDER, "shift_requests_time_based.png"),
         'shift_requests_weekday': os.path.join(PLOT_FOLDER, "shift_requests_weekday.png"),
         'shift_requests_monthly': os.path.join(PLOT_FOLDER, "shift_requests_monthly.png"),
+        'shift_requests_weekday_total_time': os.path.join(PLOT_FOLDER, "shift_requests_weekday_total_time.png"),
+        'shift_requests_by_day': os.path.join(PLOT_FOLDER, "shift_requests_by_day.png"),
     }
     
     plot_path = plot_path_map.get(plot_type)
     if plot_path and os.path.exists(plot_path):
         return send_file(plot_path, as_attachment=True)
     return "Plot not found", 404
+
 
 if __name__ == "__main__":
     # 初回実行時のセットアップ
