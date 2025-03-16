@@ -135,3 +135,77 @@ def generate_monthly_plots(df):
     plt.close()
 
     return plot_path
+
+
+def generate_total_time_weekday_plots(df):
+    if df.empty:
+        return "No data"
+    
+    # 年・月・日を連結して日付型に変換し、曜日を取得
+    df['Weekday'] = pd.to_datetime(
+        df['Date'].astype(str) + '-' + df['Month'].astype(str) + '-' + df['Year'].astype(str),
+        format='%d-%m-%Y'
+    ).dt.weekday
+
+    # シフトの開始時間・終了時間を datetime 型に変換
+    df['Start Time'] = pd.to_datetime(df['Start Time'], format='%H:%M')
+    df['End Time'] = pd.to_datetime(df['End Time'], format='%H:%M')
+
+    # シフトの総時間（時間単位）を計算
+    df['Total Time (Hours)'] = (df['End Time'] - df['Start Time']).dt.total_seconds() / (60*60)
+
+    # 曜日ごとの総募集時間を計算
+    weekday_total_time = df.groupby('Weekday')['Total Time (Hours)'].sum()
+
+    # 曜日ラベルを設定
+    weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    total_time = [weekday_total_time.get(i, 0) for i in range(7)]
+
+    # グラフを作成
+    plt.figure(figsize=(10, 6))
+    sns.set_palette("coolwarm")
+    sns.barplot(x=weekdays, y=total_time, linewidth=0, color="lightcoral")
+
+    # plt.title("Shift Requests Total Time by Weekday", color="black")
+    plt.xlabel("Weekday", color="black")
+    plt.ylabel("Total Time (Hours)", color="black")
+
+    # 軸の色とラベルサイズを統一
+    plt.tick_params(axis="both", labelcolor="black", labelsize=12)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+
+    # 画像保存
+    plot_path = os.path.join(PLOT_FOLDER, "shift_requests_weekday_total_time.png")
+    plt.tight_layout()
+    plt.savefig(plot_path, transparent=True)
+    plt.close()
+
+    return plot_path
+
+
+# 各日における募集数の推移
+def generate_daily_plots(df):
+    # 月と日を基にグループ化して、各日のシフト数をカウント
+    daywise_counts = df.groupby(['Year', 'Month', 'Date']).size().reset_index(name='Counts')
+    
+    # プロットの作成
+    plt.figure(figsize=(15, 6))
+    sns.set_palette("coolwarm")
+    sns.lineplot(x='Date', y='Counts', data=daywise_counts, hue='Month', marker='o', linewidth=2)
+    plt.title("Shift Requests by Day", color="white")
+    plt.xlabel("Day", color="white")
+    plt.ylabel("Number of Shifts", color="white")
+
+    # 軸の色を変更
+    plt.tick_params(axis="both", labelcolor="black", labelsize=14)  # メモリの色とサイズを設定
+    plt.xticks(fontsize=14)  # x軸のラベルのフォントサイズを設定
+    plt.yticks(fontsize=14)  # y軸のラベルのフォントサイズを設定
+    
+    plot_path = os.path.join(PLOT_FOLDER, "shift_requests_by_day.png")
+    plt.tight_layout()
+    plt.savefig(plot_path, transparent=True)
+    plt.close()
+
+    return plot_path
+

@@ -1,8 +1,9 @@
 import os
+import datetime
 from flask import Flask, render_template, request, send_file, redirect, url_for
 from PIL import Image
 import pandas as pd
-from static.utils.plots import generate_time_based_plots, generate_weekday_plots, generate_monthly_plots
+from static.utils.plots import generate_time_based_plots, generate_weekday_plots, generate_monthly_plots, generate_total_time_weekday_plots, generate_daily_plots
 
 app = Flask(__name__)
 
@@ -81,6 +82,46 @@ def index():
         start_date=request.form.get('start_date', ''),
         end_date=request.form.get('end_date', '')
     )
+
+
+@app.route('/month_results', methods=['GET', 'POST'])
+def month_results():
+    df = pd.read_csv(Path_Data)
+
+    # featch current month as a default value
+    current_month = datetime.datetime.now().month
+    # featch start date and end date if specified.
+    start_date = request.form.get('start_date', '')
+    end_date = request.form.get('end_date', '')
+
+    selected_month = request.form.get('month', current_month)
+
+    # 日付の範囲指定
+    if start_date and end_date:
+        df['Year-Month'] = df['Year'].astype(str) + '-' + df['Month'].astype(str).str.zfill(2)
+        df = df[(df['Year-Month'] >= start_date) & (df['Year-Month'] <= end_date)]
+
+    # 月のフィルタリング (もし指定があれば)
+    if selected_month:
+        df = df[df['Month'] == int(selected_month)]
+
+    # generate graph
+    time_based_plot_path = generate_time_based_plots(df)
+    weekday_plot_path = generate_weekday_plots(df)
+    weekday_total_time_plot_path = generate_total_time_weekday_plots(df)
+    daily_plot_path = generate_daily_plots(df)
+
+    return render_template(
+        'month_results.html',
+        time_based_plot_url=time_based_plot_path,
+        weekday_plot_url=weekday_plot_path,
+        weekday_total_time_plot_url=weekday_total_time_plot_path,
+        daily_plot_url=daily_plot_path,
+        start_date=start_date,
+        end_date=end_date,
+        selected_month=int(selected_month) if selected_month else ""
+    )
+
 
 @app.route('/download_plot/<plot_type>')
 def download_plot(plot_type):

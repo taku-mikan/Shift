@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>月ごとのシフト結果</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <a href="{{ url_for('index') }}" style="display: block; text-align: center; margin-top: 20px; color: #00c1ff;">
+        最初のページに戻る
+    </a>
+
+    <h1>月ごとのシフト結果</h1>
+
+    <!-- フィルタフォーム (範囲指定 + 月選択) -->
+    <div class="date-range-form">
+        <h3>表示範囲と月を指定</h3>
+        <form action="{{ url_for('month_results') }}" method="POST">
+            <label for="start_date">開始日時 (年/月): </label>
+            <input type="month" id="start_date" name="start_date" value="{{ start_date }}">
+
+            <label for="end_date">終了日時 (年/月): </label>
+            <input type="month" id="end_date" name="end_date" value="{{ end_date }}">
+
+            <label for="month">月を選択 (オプション):</label>
+            <select id="month" name="month">
+                <option value="">全ての月</option>
+                {% for m in range(1, 13) %}
+                <option value="{{ m }}" {% if m == selected_month %}selected{% endif %}>{{ m }}月</option>
+                {% endfor %}
+            </select>
+
+            <input type="submit" value="Apply">
+        </form>
+    </div>
+
+    <div class="chart-container">
+        <div>
+            <h3>時間帯ごとの募集シフト募集時間</h3>
+            <img src="{{ time_based_plot_url }}" alt="Shift Requests by Time Slot">
+        </div>
+        <div>
+            <h3>曜日ごとの募集シフト数</h3>
+            <img src="{{ weekday_plot_url }}" alt="Shift Requests by Weekday">
+        </div>
+        <div>
+            <h3>曜日ごとの募集シフトの総時間数</h3>
+            <img src="{{weekday_total_time_plot_url}}" alt="Shift Requests by Weekday Total Time">
+        </div>
+        <div>
+            <h3>日にちごとのシフト募集数</h3>
+            <img src="{{ daily_plot_url }}" alt="Shift Requests by Day">
+        </div>
+    </div>
+
+    <script>
+        // 画像の縦横比に応じて、grid-column の span を設定
+        window.onload = function () {
+            const images = document.querySelectorAll(".chart-container img");
+
+            images.forEach((image) => {
+            // 画像がすでに読み込まれている場合は、直ちに縦横比を計算
+            if (image.complete) {
+                const ratio = image.width / image.height;
+                if (ratio > 2.0) {
+                // image.style.gridColumn = 'span 2';
+                image.style.setProperty("grid-column", "span 2", "important");
+                // 親の div 要素にも grid-column を設定
+                const parentDiv = image.closest("div");
+                if (parentDiv) {
+                    parentDiv.style.setProperty(
+                    "grid-column",
+                    "span 2",
+                    "important"
+                    );
+                }
+                }
+            } else {
+                // 画像がまだ読み込まれていない場合は、onloadイベントで縦横比を計算
+                image.onload = function () {
+                const ratio = image.width / image.height;
+                if (ratio > 3) {
+                    image.style.setProperty("grid-column", "span 2", "important");
+                    // 親の div 要素にも grid-column を設定
+                    const parentDiv = image.closest("div");
+                    if (parentDiv) {
+                    parentDiv.style.setProperty(
+                        "grid-column",
+                        "span 2",
+                        "important"
+                    );
+                    }
+                }
+                };
+            }
+            });
+        };
+    </script>
+</body>
+</html>

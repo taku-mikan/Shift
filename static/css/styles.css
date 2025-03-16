@@ -75,7 +75,20 @@ h3 {
   color: #1e3d58;
 }
 
+.date-range-form select,
 .date-range-form input[type="month"],
+.date-range-form input[type="submit"] {
+    width: 70%;
+    max-width: 300px;
+    font-size: 18px;
+    padding: 12px;
+    border: 2px solid #00c1ff;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+    color: #1e3d58;
+}
+
+/* .date-range-form input[type="month"],
 .date-range-form input[type="submit"] {
   background-color: #f5f5f5;
   color: #1e3d58;
@@ -85,14 +98,26 @@ h3 {
   width: 70%;
   font-size: 18px;
   margin-bottom: 20px;
-}
+} */
 
 .date-range-form input[type="submit"] {
-  width: 30%;
+  width: 40%;
+  max-width: 200px;
+  background-color: #00c1ff;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 .date-range-form input[type="submit"]:hover {
-  background-color: #ff6ec7;
+  background-color: #008bbf;
+}
+
+.date-range-form form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .container {
@@ -206,4 +231,47 @@ button:hover {
   .chart-container img {
       grid-column: span 1; /* 1列表示 */
   }
+}
+
+/* 月選択フォームのスタイル */
+/* 月選択フォームの修正 */
+.month-select-form {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px auto;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 0 20px rgba(0, 194, 255, 0.5);
+  text-align: center;
+}
+
+.month-select-form label {
+  font-size: 18px;
+  color: #1e3d58;
+}
+
+.month-select-form select,
+.month-select-form input[type="submit"] {
+  background-color: #f5f5f5;
+  color: #1e3d58;
+  border: 2px solid #00c1ff;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+.month-select-form input[type="submit"] {
+  width: 30%;
+  margin-top: 10px;
+}
+
+.month-select-form input[type="submit"]:hover {
+  background-color: #ff6ec7;
+}
+
+.month-select-form h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #1e3d58;
 }
